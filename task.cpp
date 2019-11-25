@@ -26,8 +26,9 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         }
         return;
     };
-   // omp_set_num_threads(omp_get_max_threads());
+    omp_set_num_threads(omp_get_max_threads());
     short len = nRes * nRes;
+    
     #pragma omp parallel 
     {
         vector<double> current_result(len, 0);
@@ -35,12 +36,9 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         for(int query = 0; query < nQueries; ++query)
             check(query, current_result);
         
-        for (short i = 0; i < nRes; ++i){
-            for(short j = 0; j < nRes; ++j){
-                short ind = i * nRes + j;
-                #pragma omp atomic
-                result[ind] += current_result[ind];
-            }
+        for (short ind = 0; ind < len; ++ind){
+            #pragma omp atomic
+            result[ind] += current_result[ind];
         }
     }
 
