@@ -28,7 +28,7 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         }
         return;
     };
-    omp_set_num_threads(omp_get_max_threads());
+    // VERY OPTIONAL !!!! WARNING !!!omp_set_num_threads(omp_get_max_threads());
     #pragma omp parallel 
     {
         vector<double> current_result(nRes * nRes, 0);
