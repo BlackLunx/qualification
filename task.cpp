@@ -1,6 +1,8 @@
 #include "task.h"
+#pragma GCC target("mmx,avx,fma")
 #include<bits/stdc++.h>
 #include "omp.h"
+
 using namespace std;
 
 void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes, double* data, int32_t* queries, double* result)
@@ -19,23 +21,21 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         {
             for (short row = 0; row < nRes; ++row)
             {
-                int32_t cRowA = rowA + row;
-                int32_t cColA = colA + col;
-                int32_t cRowB = rowB + row;
-                int32_t cColB = colB + col;
-                current_result[row * nRes + col] += data[cRowA * nCols + cColA] * data[cRowB * nCols + cColB];
+                int32_t cRowA = (rowA + row) * nCols + colA + col;
+                int32_t cRowB = (rowB + row) * nCols + colB + col;
+                current_result[row * nRes + col] += data[cRowA] * data[cRowB];
             }
         }
         return;
     };
-    omp_set_num_threads(omp_get_max_threads());
-    #pragma omp parallel 
+    //omp_set_num_threads(omp_get_max_threads());
+    #pragma omp parallel
     {
         vector<double> current_result(nRes * nRes, 0);
-        #pragma omp for schedule(static)
-        for(int query = 0; query < nQueries; ++query)
+        #pragma omp for schedule(dynamic)
+        for(int query = 0; query < nQueries; ++query){
             check(query, current_result);
-        
+        }
         for (short i = 0; i < nRes; ++i){
             for(short j = 0; j < nRes; ++j){
                 short ind = i * nRes + j;
