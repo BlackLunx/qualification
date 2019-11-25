@@ -27,9 +27,10 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         return;
     };
    // omp_set_num_threads(omp_get_max_threads());
+    short len = nRes * nRes;
     #pragma omp parallel 
     {
-        vector<double> current_result(nRes * nRes, 0);
+        vector<double> current_result(len, 0);
         #pragma omp for schedule(static)
         for(int query = 0; query < nQueries; ++query)
             check(query, current_result);
