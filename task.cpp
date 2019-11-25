@@ -6,9 +6,9 @@ using namespace std;
 void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes, double* data, int32_t* queries, double* result)
 {
     // Reference unoptimized code, replace it with your solution
-    bool* used = new bool[nQueries];
-    memset(used, 0, nQueries);
-//      vector<bool> used(nQueries, 0);
+//    bool* used = new bool[nQueries];
+//    memset(used, 0, nQueries);
+      vector<bool> used(nQueries, 0);
 //    const int sz = 20000000;
 //    bitset<sz> used(0);
     auto check = [&](int queryId, double* current_result){
