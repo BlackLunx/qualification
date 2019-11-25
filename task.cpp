@@ -17,13 +17,11 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         short colA = queries[diff + 1];
         short rowB = queries[diff + 2];
         short colB = queries[diff + 3];
-	for(short col = 0; col < nRes; ++col)
-        {
-            for (short row = 0; row < nRes; ++row)
-            {
-		int32_t cRowA = (rowA + row) * nCols + colA + col;
-                int32_t cRowB = (rowB + row) * nCols + colB + col; 
-		current_result[row * nRes + col] += data[cRowA] * data[cRowB];
+        for(short col = 0; col < nRes; ++col){
+            for (short row = 0; row < nRes; ++row){
+                int32_t cRowA = (rowA + row) * nCols + colA + col;
+                int32_t cRowB = (rowB + row) * nCols + colB + col;
+                current_result[row * nRes + col] += data[cRowA] * data[cRowB];
             }
         }
         return;
@@ -32,27 +30,27 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
     #pragma omp parallel
     {
         vector<double> current_result(nRes * nRes, 0);
-	int cnt = int(sqrt(nQueries));
-	vector<int> gg{0};
-	int cur = 0;
-	for (int i = 0;i < cnt;i++) {
-            cur += nQueries/cnt;
-	    gg.push_back(cur);
-	}
-	gg[gg.size() - 1] += nQueries%cnt;
-	#pragma omp for schedule(static)
-    for(int i = 0; i < cnt; ++i){
-	    for (int j = gg[i];j < gg[i + 1];++j) {
-            check(j, current_result);
-	    }   
-    }
-	for (short i = 0; i < nRes; ++i){
+        int cnt = int(sqrt(nQueries));
+        vector<int> gg{0};
+        int cur = 0;
+        for (int i = 0;i < cnt;i++) {
+                cur += nQueries/cnt;
+            gg.push_back(cur);
+        }
+        gg[gg.size() - 1] += nQueries%cnt;
+        #pragma omp for schedule(static)
+        for(int i = 0; i < cnt; ++i){
+            for (int j = gg[i];j < gg[i + 1];++j) {
+                check(j, current_result);
+            }
+        }
+        for (short i = 0; i < nRes; ++i){
             for(short j = 0; j < nRes; ++j){
                 short ind = i * nRes + j;
                 #pragma omp atomic
                 result[ind] += current_result[ind];
             }
-	} 
+        }
     }
 
     #pragma omp barrier
