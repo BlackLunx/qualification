@@ -19,16 +19,16 @@ void performQueries(int32_t nRows, int32_t nCols, int32_t nQueries, int32_t nRes
         {
             for (short row = 0; row < nRes; ++row)
             {
-                short cRowA = rowA + row;
-                short cColA = colA + col;
-                short cRowB = rowB + row;
-                short cColB = colB + col;
+                int32_t cRowA = rowA + row;
+                int32_t cColA = colA + col;
+                int32_t cRowB = rowB + row;
+                int32_t cColB = colB + col;
                 current_result[row * nRes + col] += data[cRowA * nCols + cColA] * data[cRowB * nCols + cColB];
             }
         }
         return;
     };
-    // VERY OPTIONAL !!!! WARNING !!!omp_set_num_threads(omp_get_max_threads());
+    omp_set_num_threads(omp_get_max_threads());
     #pragma omp parallel 
     {
         vector<double> current_result(nRes * nRes, 0);
